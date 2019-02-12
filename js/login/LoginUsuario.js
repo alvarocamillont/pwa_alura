@@ -1,4 +1,4 @@
-let logado = Json.parse(localStorage.getItem('logado'));
+let logado = JSON.parse(localStorage.getItem('logado')) || false;
 
 LoginUsuario_render({
   logado,
