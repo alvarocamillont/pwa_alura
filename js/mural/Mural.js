@@ -1,11 +1,8 @@
 const Mural = (function(_render, Filtro) {
   'use strict';
-  let cartoes = JSON.parse(localStorage.getItem('cartoes') || []).map(
-    (cartaoLocal) => new Cartao(cartaoLocal.conteudo, cartaoLocal.tipo)
-  );
-  cartoes.forEach((cartao) => {
-    preparaCartao(cartao);
-  });
+
+  let cartoes = pegaCartoesUsuario();
+
   const render = () => _render({ cartoes: cartoes, filtro: Filtro.tagsETexto });
   render();
 
@@ -21,9 +18,22 @@ const Mural = (function(_render, Filtro) {
     });
   }
 
+  function pegaCartoesUsuario() {
+    let cartoesLocal = JSON.parse(localStorage.getItem(usuario));
+    if (cartoesLocal) {
+      return cartoesLocal.map((cartaoLocal) => {
+        let cartao = new Cartao(cartaoLocal.conteudo, cartaoLocal.tipo);
+        preparaCartao(cartao);
+        return cartao;
+      });
+    } else {
+      return [];
+    }
+  }
+
   function salvaCartoes() {
     localStorage.setItem(
-      'cartoes',
+      usuario,
       JSON.stringify(
         cartoes.map((cartao) => ({
           conteudo: cartao.conteudo,
@@ -32,6 +42,16 @@ const Mural = (function(_render, Filtro) {
       )
     );
   }
+
+  login.on('login', () => {
+    cartoes = pegaCartoesUsuario();
+    render();
+  });
+
+  login.on('logout', () => {
+    cartoes = [];
+    render();
+  });
 
   function adiciona(cartao) {
     if (logado) {
@@ -42,7 +62,7 @@ const Mural = (function(_render, Filtro) {
       render();
       return true;
     } else {
-      alert('Você não está logado nessa página');
+      alert('Você não está logado');
     }
   }
 
