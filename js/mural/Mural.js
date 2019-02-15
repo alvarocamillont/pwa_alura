@@ -1,4 +1,4 @@
-const Mural = (function(_render, Filtro) {
+const Mural = (function (_render, Filtro) {
   'use strict';
 
   let cartoes = pegaCartoesUsuario();
@@ -9,6 +9,16 @@ const Mural = (function(_render, Filtro) {
   Filtro.on('filtrado', render);
 
   function preparaCartao(cartao) {
+    const urlsImagens = Cartao.pegaImagens(cartao)
+    urlsImagens.forEach(url => {
+      fetch(url).then(resposta => {
+        caches.open('ceep-imagens').then(cache => {
+          cache.put(url, resposta)
+        })
+      }
+
+      )
+    })
     cartao.on('mudanca.**', salvaCartoes);
     cartao.on('remocao', () => {
       cartoes = cartoes.slice(0);
@@ -65,6 +75,8 @@ const Mural = (function(_render, Filtro) {
       alert('Você não está logado');
     }
   }
+
+
 
   return Object.seal({
     adiciona
