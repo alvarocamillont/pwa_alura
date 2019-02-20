@@ -1,4 +1,4 @@
-let versao = 5;
+let versao = 6;
 
 let arquivos = [
   '/',
@@ -35,6 +35,10 @@ let arquivos = [
 ];
 
 self.addEventListener('install', () => {
+  console.log('Instalou!');
+});
+
+self.addEventListener('activate', () => {
   console.log('Instalou!');
 
   caches.open(`ceep-arquivos-${versao}`).then((cache) => {
